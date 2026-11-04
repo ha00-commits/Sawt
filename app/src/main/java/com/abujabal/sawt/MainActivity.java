@@ -4,12 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.PlaybackParams;
+import android.media.audiofx.EnvironmentalReverb;
 import android.media.audiofx.LoudnessEnhancer;
-import android.media.audiofx.PresetReverb;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,12 +35,11 @@ public class MainActivity extends AppCompatActivity {
     private long startTime = 0;
 
     private TextView tvTimer, tvFile;
-    private SeekBar seek;
+    private SeekBar seek, sbVolume, sbEcho, sbPitch;
     private Button btnRecord, btnStop, btnPlay, btnBack, btnForward, btnShare;
-    private Button btnEcho, btnBoost, btnPitch, btnClear;
 
-    private PresetReverb reverb;
     private LoudnessEnhancer boost;
+    private EnvironmentalReverb reverb;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -51,16 +49,16 @@ public class MainActivity extends AppCompatActivity {
         tvTimer = findViewById(R.id.tvTimer);
         tvFile = findViewById(R.id.tvFile);
         seek = findViewById(R.id.seek);
+        sbVolume = findViewById(R.id.sbVolume);
+        sbEcho = findViewById(R.id.sbEcho);
+        sbPitch = findViewById(R.id.sbPitch);
+
         btnRecord = findViewById(R.id.btnRecord);
         btnStop = findViewById(R.id.btnStop);
         btnPlay = findViewById(R.id.btnPlay);
         btnBack = findViewById(R.id.btnBack);
         btnForward = findViewById(R.id.btnForward);
         btnShare = findViewById(R.id.btnShare);
-        btnEcho = findViewById(R.id.btnEcho);
-        btnBoost = findViewById(R.id.btnBoost);
-        btnPitch = findViewById(R.id.btnPitch);
-        btnClear = findViewById(R.id.btnClear);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -73,15 +71,29 @@ public class MainActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> seekBy(-10000));
         btnForward.setOnClickListener(v -> seekBy(10000));
         btnShare.setOnClickListener(v -> shareFile());
-        btnEcho.setOnClickListener(v -> applyEcho());
-        btnBoost.setOnClickListener(v -> applyBoost());
-        btnPitch.setOnClickListener(v -> applyPitch());
-        btnClear.setOnClickListener(v -> clearEffects());
 
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar s, int p, boolean u) {
                 if (player != null && u) player.seekTo(p);
             }
+            public void onStartTrackingTouch(SeekBar s) {}
+            public void onStopTrackingTouch(SeekBar s) {}
+        });
+
+        sbVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar s, int p, boolean u) { applyVolume(p); }
+            public void onStartTrackingTouch(SeekBar s) {}
+            public void onStopTrackingTouch(SeekBar s) {}
+        });
+
+        sbEcho.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar s, int p, boolean u) { applyEcho(p); }
+            public void onStartTrackingTouch(SeekBar s) {}
+            public void onStopTrackingTouch(SeekBar s) {}
+        });
+
+        sbPitch.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar s, int p, boolean u) { applyPitch(p); }
             public void onStartTrackingTouch(SeekBar s) {}
             public void onStopTrackingTouch(SeekBar s) {}
         });
@@ -124,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         try { recorder.release(); } catch (Exception ignored) {}
         recorder = null;
         recording = false;
-        handler.removeCallbacksAndMessages(null);
         Toast.makeText(this, "تم الحفظ", Toast.LENGTH_SHORT).show();
     }
 
@@ -135,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (player != null && player.isPlaying()) {
             player.pause();
-            btnPlay.setText("▶ تشغيل");
+            btnPlay.setText("▶");
             return;
         }
         if (player == null) {
@@ -148,7 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 player.setDataSource(currentFile.getAbsolutePath());
                 player.prepare();
                 seek.setMax(player.getDuration());
-                player.setOnCompletionListener(mp -> btnPlay.setText("▶ تشغيل"));
+                player.setOnCompletionListener(mp -> btnPlay.setText("▶"));
+                applyVolume(sbVolume.getProgress());
+                applyEcho(sbEcho.getProgress());
+                applyPitch(sbPitch.getProgress());
                 updateSeek();
             } catch (Exception e) {
                 Toast.makeText(this, "فشل التشغيل: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -156,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         player.start();
-        btnPlay.setText("⏸ إيقاف مؤقت");
+        btnPlay.setText("⏸");
     }
 
     private void updateSeek() {
@@ -172,6 +186,45 @@ public class MainActivity extends AppCompatActivity {
         player.seekTo(pos);
     }
 
+    private void applyVolume(int percent) {
+        if (player == null) return;
+        try {
+            if (boost == null) boost = new LoudnessEnhancer(player.getAudioSessionId());
+            int gain = (int)((percent - 50) * 20);
+            boost.setTargetGain(Math.max(0, gain));
+            boost.setEnabled(percent > 50);
+        } catch (Exception ignored) {}
+    }
+
+    private void applyEcho(int percent) {
+        if (player == null) return;
+        try {
+            if (reverb == null) {
+                reverb = new EnvironmentalReverb(0, player.getAudioSessionId());
+            }
+            if (percent <= 0) {
+                reverb.setEnabled(false);
+                return;
+            }
+            reverb.setDecayTime((long)(percent * 40));
+            reverb.setReverbLevel((short)(percent * 60 - 3000));
+            reverb.setDensity((short)1000);
+            reverb.setDiffusion((short)1000);
+            reverb.setEnabled(true);
+        } catch (Exception ignored) {}
+    }
+
+    private void applyPitch(int percent) {
+        if (player == null) return;
+        try {
+            float pitch = 0.5f + (percent / 100f);
+            PlaybackParams pp = player.getPlaybackParams();
+            pp.setPitch(pitch);
+            pp.setSpeed(1.0f);
+            player.setPlaybackParams(pp);
+        } catch (Exception ignored) {}
+    }
+
     private void shareFile() {
         if (currentFile == null || !currentFile.exists()) {
             Toast.makeText(this, "لا يوجد تسجيل", Toast.LENGTH_SHORT).show();
@@ -183,61 +236,6 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(Intent.EXTRA_STREAM, uri);
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(i, "مشاركة التسجيل"));
-    }
-
-    private void applyEcho() {
-        if (player == null) { Toast.makeText(this, "شغّل التسجيل أولاً", Toast.LENGTH_SHORT).show(); return; }
-        try {
-            if (reverb == null) {
-                reverb = new PresetReverb(0, player.getAudioSessionId());
-            }
-            reverb.setPreset(PresetReverb.PRESET_LARGEHALL);
-            reverb.setEnabled(true);
-            Toast.makeText(this, "صدى مفعّل", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "فشل: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void applyBoost() {
-        if (player == null) { Toast.makeText(this, "شغّل التسجيل أولاً", Toast.LENGTH_SHORT).show(); return; }
-        try {
-            if (boost == null) {
-                boost = new LoudnessEnhancer(player.getAudioSessionId());
-            }
-            boost.setTargetGain(1500);
-            boost.setEnabled(true);
-            Toast.makeText(this, "تضخيم مفعّل", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "فشل: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void applyPitch() {
-        if (player == null) { Toast.makeText(this, "شغّل التسجيل أولاً", Toast.LENGTH_SHORT).show(); return; }
-        try {
-            PlaybackParams pp = player.getPlaybackParams();
-            pp.setPitch(1.4f);
-            pp.setSpeed(1.0f);
-            player.setPlaybackParams(pp);
-            Toast.makeText(this, "تغيير الصوت مفعّل", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "غير مدعوم على جهازك", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void clearEffects() {
-        try {
-            if (reverb != null) { reverb.setEnabled(false); reverb.release(); reverb = null; }
-            if (boost != null) { boost.setEnabled(false); boost.release(); boost = null; }
-            if (player != null) {
-                PlaybackParams pp = player.getPlaybackParams();
-                pp.setPitch(1.0f);
-                pp.setSpeed(1.0f);
-                player.setPlaybackParams(pp);
-            }
-            Toast.makeText(this, "رجع طبيعي", Toast.LENGTH_SHORT).show();
-        } catch (Exception ignored) {}
     }
 
     @Override
