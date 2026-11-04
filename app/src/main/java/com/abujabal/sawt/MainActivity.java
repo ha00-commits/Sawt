@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 reverb.setEnabled(false);
                 return;
             }
-            reverb.setDecayTime((long)(percent * 40));
+            reverb.setDecayTime(percent * 40);
             reverb.setReverbLevel((short)(percent * 60 - 3000));
             reverb.setDensity((short)1000);
             reverb.setDiffusion((short)1000);
