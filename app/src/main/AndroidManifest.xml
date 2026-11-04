@@ -9,7 +9,7 @@
     <application
         android:label="صوت"
         android:icon="@android:drawable/ic_btn_speak_now"
-        android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity
             android:name=".MainActivity"
