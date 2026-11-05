@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.PlaybackParams;
@@ -36,10 +39,17 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvTimer, tvFile;
     private SeekBar seek, sbVolume, sbEcho, sbPitch;
-    private Button btnRecord, btnStop, btnPlay, btnBack, btnForward, btnShare;
+    private Button btnRecord, btnStop, btnPlay, btnBack, btnForward, btnShare, btnLive;
 
     private LoudnessEnhancer boost;
     private EnvironmentalReverb reverb;
+
+    private boolean live = false;
+    private AudioRecord audioRecord;
+    private AudioTrack audioTrack;
+    private Thread liveThread;
+    private volatile float liveGain = 1.0f;
+    private volatile float liveEcho = 0.0f;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -59,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnForward = findViewById(R.id.btnForward);
         btnShare = findViewById(R.id.btnShare);
+        btnLive = findViewById(R.id.btnLive);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -66,11 +77,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         btnRecord.setOnClickListener(v -> startRecording());
-        btnStop.setOnClickListener(v -> stopRecording());
+        btnStop.setOnClickListener(v -> { stopRecording(); stopLive(); });
         btnPlay.setOnClickListener(v -> togglePlay());
         btnBack.setOnClickListener(v -> seekBy(-10000));
         btnForward.setOnClickListener(v -> seekBy(10000));
         btnShare.setOnClickListener(v -> shareFile());
+        btnLive.setOnClickListener(v -> toggleLive());
 
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar s, int p, boolean u) {
@@ -81,13 +93,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         sbVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar s, int p, boolean u) { applyVolume(p); }
+            public void onProgressChanged(SeekBar s, int p, boolean u) {
+                liveGain = 0.2f + (p / 100f) * 2.0f;
+                applyVolume(p);
+            }
             public void onStartTrackingTouch(SeekBar s) {}
             public void onStopTrackingTouch(SeekBar s) {}
         });
 
         sbEcho.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar s, int p, boolean u) { applyEcho(p); }
+            public void onProgressChanged(SeekBar s, int p, boolean u) {
+                liveEcho = p / 100f;
+                applyEcho(p);
+            }
             public void onStartTrackingTouch(SeekBar s) {}
             public void onStopTrackingTouch(SeekBar s) {}
         });
@@ -100,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startRecording() {
-        if (recording) return;
+        if (recording || live) return;
         try {
             File dir = new File(getCacheDir(), "rec");
             if (!dir.exists()) dir.mkdirs();
@@ -140,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void togglePlay() {
+        if (live) { Toast.makeText(this, "أوقف الوضع المباشر أولاً", Toast.LENGTH_SHORT).show(); return; }
         if (currentFile == null || !currentFile.exists()) {
             Toast.makeText(this, "سجّل أولاً", Toast.LENGTH_SHORT).show();
             return;
@@ -199,13 +218,8 @@ public class MainActivity extends AppCompatActivity {
     private void applyEcho(int percent) {
         if (player == null) return;
         try {
-            if (reverb == null) {
-                reverb = new EnvironmentalReverb(0, player.getAudioSessionId());
-            }
-            if (percent <= 0) {
-                reverb.setEnabled(false);
-                return;
-            }
+            if (reverb == null) reverb = new EnvironmentalReverb(0, player.getAudioSessionId());
+            if (percent <= 0) { reverb.setEnabled(false); return; }
             reverb.setDecayTime(percent * 40);
             reverb.setReverbLevel((short)(percent * 60 - 3000));
             reverb.setDensity((short)1000);
@@ -238,10 +252,92 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(i, "مشاركة التسجيل"));
     }
 
+    private void toggleLive() {
+        if (live) { stopLive(); return; }
+        if (recording) { Toast.makeText(this, "أوقف التسجيل أولاً", Toast.LENGTH_SHORT).show(); return; }
+
+        int sampleRate = 44100;
+        int bufSize = AudioRecord.getMinBufferSize(sampleRate,
+                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        if (bufSize < 4096) bufSize = 4096;
+
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                return;
+            }
+
+            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                    sampleRate, AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT, bufSize);
+
+            audioTrack = new AudioTrack.Builder()
+                    .setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                            .build())
+                    .setAudioFormat(new AudioFormat.Builder()
+                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                            .setSampleRate(sampleRate)
+                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                            .build())
+                    .setBufferSizeInBytes(bufSize)
+                    .setTransferMode(AudioTrack.MODE_STREAM)
+                    .build();
+
+            audioRecord.startRecording();
+            audioTrack.play();
+            live = true;
+            btnLive.setText("⏹ إيقاف المباشر");
+
+            final int delay = (int)(sampleRate * 0.25);
+            final short[] echoBuf = new short[delay];
+            final int[] echoIdx = {0};
+
+            liveThread = new Thread(() -> {
+                short[] buf = new short[bufSize / 2];
+                while (live) {
+                    int n = audioRecord.read(buf, 0, buf.length);
+                    if (n <= 0) continue;
+                    for (int i = 0; i < n; i++) {
+                        float s = buf[i] * liveGain;
+                        float e = echoBuf[echoIdx[0]] * liveEcho;
+                        float mix = s + e;
+                        if (mix > 32767) mix = 32767;
+                        if (mix < -32768) mix = -32768;
+                        short out = (short) mix;
+                        echoBuf[echoIdx[0]] = out;
+                        echoIdx[0] = (echoIdx[0] + 1) % delay;
+                        buf[i] = out;
+                    }
+                    audioTrack.write(buf, 0, n);
+                }
+            });
+            liveThread.start();
+
+            Toast.makeText(this, "الوضع المباشر شغال — البس سماعة", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            live = false;
+            Toast.makeText(this, "فشل المباشر: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void stopLive() {
+        if (!live) return;
+        live = false;
+        btnLive.setText("🎙️ وضع مباشر (البس سماعة)");
+        try { if (audioRecord != null) { audioRecord.stop(); audioRecord.release(); } } catch (Exception ignored) {}
+        try { if (audioTrack != null) { audioTrack.stop(); audioTrack.release(); } } catch (Exception ignored) {}
+        audioRecord = null;
+        audioTrack = null;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopLive();
         try { if (recorder != null) recorder.release(); } catch (Exception ignored) {}
         try { if (player != null) player.release(); } catch (Exception ignored) {}
     }
-}
+    }
