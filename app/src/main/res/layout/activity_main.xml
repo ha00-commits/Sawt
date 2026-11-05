@@ -72,6 +72,16 @@
                 android:text="■ إيقاف"/>
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnLive"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#00897B"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:text="🎙️ وضع مباشر (البس سماعة)"/>
+
         <SeekBar
             android:id="@+id/seek"
             android:layout_width="match_parent"
