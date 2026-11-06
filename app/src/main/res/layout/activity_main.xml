@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B1B33">
+    android:background="#050506"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,20 +12,23 @@
         android:padding="20dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="طاغية صوت"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold"/>
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.02"
+            android:gravity="center"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="المطور: أبوجبل  •  @P71GP"
-            android:textColor="#8FB3E0"
+            android:text="صانع التطبيق: أبوجبل  •  @P71GP"
+            android:textColor="#8A8A90"
             android:textSize="12sp"
-            android:paddingBottom="14dp"/>
+            android:gravity="center"
+            android:paddingBottom="18dp"/>
 
         <TextView
             android:id="@+id/tvTimer"
@@ -32,19 +36,20 @@
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textColor="#FFFFFF"
-            android:textSize="52sp"
+            android:textSize="56sp"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:fontFamily="sans-serif-light"/>
 
         <TextView
             android:id="@+id/tvFile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="لا يوجد تسجيل"
-            android:textColor="#8FB3E0"
+            android:textColor="#6E6E76"
             android:textSize="12sp"
             android:gravity="center"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="18dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,39 +59,39 @@
                 android:id="@+id/btnRecord"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="56dp"
+                android:layout_height="60dp"
                 android:layout_marginEnd="6dp"
-                android:backgroundTint="#E53935"
-                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_bg"
+                android:textColor="#FF453A"
                 android:textStyle="bold"
-                android:text="● تسجيل"/>
+                android:text="●  تسجيل"/>
             <Button
                 android:id="@+id/btnStop"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="56dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="6dp"
-                android:backgroundTint="#455A64"
+                android:background="@drawable/btn_bg"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:text="■ إيقاف"/>
+                android:text="■  إيقاف"/>
         </LinearLayout>
 
         <Button
             android:id="@+id/btnLive"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="60dp"
             android:layout_marginTop="10dp"
-            android:backgroundTint="#00897B"
-            android:textColor="#FFFFFF"
+            android:background="@drawable/btn_bg"
+            android:textColor="#30D158"
             android:textStyle="bold"
-            android:text="🎙️ وضع مباشر (البس سماعة)"/>
+            android:text="🎙️  وضع مباشر (البس سماعة)"/>
 
         <SeekBar
             android:id="@+id/seek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"/>
+            android:paddingTop="18dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,29 +101,30 @@
                 android:id="@+id/btnBack"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:layout_marginEnd="4dp"
-                android:backgroundTint="#1E3A5F"
+                android:background="@drawable/btn_bg"
                 android:textColor="#FFFFFF"
                 android:text="-10"/>
             <Button
                 android:id="@+id/btnPlay"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:backgroundTint="#2F80ED"
-                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_bg"
+                android:textColor="#0A84FF"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:text="▶"/>
             <Button
                 android:id="@+id/btnForward"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:layout_marginStart="4dp"
-                android:backgroundTint="#1E3A5F"
+                android:background="@drawable/btn_bg"
                 android:textColor="#FFFFFF"
                 android:text="+10"/>
         </LinearLayout>
@@ -126,68 +132,76 @@
         <Button
             android:id="@+id/btnShare"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="54dp"
             android:layout_marginTop="10dp"
-            android:backgroundTint="#1E3A5F"
+            android:background="@drawable/btn_bg"
             android:textColor="#FFFFFF"
-            android:text="📤 مشاركة التسجيل"/>
+            android:text="📤  مشاركة التسجيل"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="المؤثرات"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:paddingTop="20dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🔊 علو الصوت"
-            android:textColor="#8FB3E0"
-            android:paddingTop="10dp"/>
-        <SeekBar
-            android:id="@+id/sbVolume"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"/>
+            android:orientation="vertical"
+            android:background="@drawable/btn_bg"
+            android:padding="16dp"
+            android:layout_marginTop="18dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🌊 الصدى"
-            android:textColor="#8FB3E0"
-            android:paddingTop="8dp"/>
-        <SeekBar
-            android:id="@+id/sbEcho"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="0"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="المؤثرات"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🎚️ تغيير الصوت"
-            android:textColor="#8FB3E0"
-            android:paddingTop="8dp"/>
-        <SeekBar
-            android:id="@+id/sbPitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔊  علو الصوت"
+                android:textColor="#8A8A90"
+                android:paddingTop="12dp"/>
+            <SeekBar
+                android:id="@+id/sbVolume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="50"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌊  الصدى"
+                android:textColor="#8A8A90"
+                android:paddingTop="8dp"/>
+            <SeekBar
+                android:id="@+id/sbEcho"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎚️  تغيير الصوت"
+                android:textColor="#8A8A90"
+                android:paddingTop="8dp"/>
+            <SeekBar
+                android:id="@+id/sbPitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="50"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="صانع التطبيق: أبوجبل\n@P71GP\nhttps://t.me/kscmll"
-            android:textColor="#8FB3E0"
+            android:textColor="#5A5A62"
             android:textSize="12sp"
             android:gravity="center"
-            android:paddingTop="24dp"
-            android:paddingBottom="20dp"/>
+            android:paddingTop="28dp"
+            android:paddingBottom="24dp"/>
     </LinearLayout>
 </ScrollView>
