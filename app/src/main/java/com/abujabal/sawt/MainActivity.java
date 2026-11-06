@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean live = false;
     private AudioRecord audioRecord;
     private AudioTrack audioTrack;
-    private Thread liveThread;
     private volatile float liveGain = 1.0f;
     private volatile float liveEcho = 0.0f;
 
@@ -260,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
         int bufSize = AudioRecord.getMinBufferSize(sampleRate,
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         if (bufSize < 4096) bufSize = 4096;
+        final int bufferSize = bufSize;
 
         try {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     sampleRate, AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT, bufSize);
+                    AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 
             audioTrack = new AudioTrack.Builder()
                     .setAudioAttributes(new AudioAttributes.Builder()
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                             .setSampleRate(sampleRate)
                             .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                             .build())
-                    .setBufferSizeInBytes(bufSize)
+                    .setBufferSizeInBytes(bufferSize)
                     .setTransferMode(AudioTrack.MODE_STREAM)
                     .build();
 
@@ -295,8 +295,8 @@ public class MainActivity extends AppCompatActivity {
             final short[] echoBuf = new short[delay];
             final int[] echoIdx = {0};
 
-            liveThread = new Thread(() -> {
-                short[] buf = new short[bufSize / 2];
+            new Thread(() -> {
+                short[] buf = new short[bufferSize / 2];
                 while (live) {
                     int n = audioRecord.read(buf, 0, buf.length);
                     if (n <= 0) continue;
@@ -313,8 +313,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     audioTrack.write(buf, 0, n);
                 }
-            });
-            liveThread.start();
+            }).start();
 
             Toast.makeText(this, "الوضع المباشر شغال — البس سماعة", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -340,4 +339,4 @@ public class MainActivity extends AppCompatActivity {
         try { if (recorder != null) recorder.release(); } catch (Exception ignored) {}
         try { if (player != null) player.release(); } catch (Exception ignored) {}
     }
-    }
+}
