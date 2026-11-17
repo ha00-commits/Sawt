@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#07070A</color>
+    <color name="surface">#121218</color>
+    <color name="surface2">#17171F</color>
+    <color name="stroke">#262633</color>
+    <color name="gold">#D4AF37</color>
+    <color name="cyan">#22D3EE</color>
+    <color name="red">#EF4444</color>
+    <color name="green">#22C55E</color>
+    <color name="text">#FFFFFF</color>
+    <color name="muted">#8A8A96</color>
+</resources>
