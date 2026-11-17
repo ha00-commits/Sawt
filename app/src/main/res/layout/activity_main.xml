@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0B0F">
+    android:background="@drawable/bg_gradient"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,95 +11,126 @@
         android:orientation="vertical"
         android:padding="18dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="نديم الصمت"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="نديم الصمت"
+                android:textColor="@color/text"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="© أبوجبل"
+                android:textColor="@color/gold"
+                android:textSize="12sp"
+                android:background="@drawable/btn_ghost"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="صانع التطبيق: أبوجبل ابن الكوت • @P71GP"
-            android:textColor="#8A8A90"
-            android:textSize="12sp"
-            android:gravity="center"
+            android:text="مسجّل ومكسر صوتي احترافي"
+            android:textColor="@color/muted"
+            android:textSize="13sp"
             android:paddingBottom="14dp"/>
-
-        <TextView
-            android:id="@+id/tvTimer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textColor="#FFFFFF"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-
-        <TextView
-            android:id="@+id/tvFile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="لا يوجد تسجيل"
-            android:textColor="#7A7A85"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:paddingBottom="12dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvTimer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textColor="@color/text"
+                android:textSize="56sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="لا يوجد تسجيل"
+                android:textColor="@color/muted"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:paddingBottom="10dp"/>
+
             <Button
                 android:id="@+id/btnRecord"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="56dp"
-                android:layout_marginEnd="4dp"
-                android:backgroundTint="#E53935"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:background="@drawable/btn_record"
                 android:textColor="#FFFFFF"
-                android:text="● تسجيل"/>
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="●  بدء التسجيل"/>
+
             <Button
                 android:id="@+id/btnStop"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="56dp"
-                android:layout_marginStart="4dp"
-                android:backgroundTint="#455A64"
-                android:textColor="#FFFFFF"
-                android:text="■ إيقاف"/>
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/btn_ghost"
+                android:textColor="@color/text"
+                android:text="■  إيقاف"/>
         </LinearLayout>
 
         <SeekBar
             android:id="@+id/seek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp"/>
+            android:paddingTop="14dp"
+            android:progressTint="@color/cyan"
+            android:thumbTint="@color/cyan"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
             <Button
                 android:id="@+id/btnPlay"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="50dp"
-                android:layout_marginEnd="4dp"
-                android:backgroundTint="#2F80ED"
+                android:layout_height="54dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/btn_primary"
                 android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="18sp"
                 android:text="▶"/>
+
             <Button
                 android:id="@+id/btnShare"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="50dp"
-                android:layout_marginStart="4dp"
-                android:backgroundTint="#1E3A5F"
-                android:textColor="#FFFFFF"
+                android:layout_height="54dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/btn_ghost"
+                android:textColor="@color/text"
                 android:text="📤 مشاركة"/>
         </LinearLayout>
 
@@ -106,78 +138,100 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🎛️ المكسر"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textColor="@color/text"
+            android:textSize="19sp"
             android:textStyle="bold"
-            android:paddingTop="16dp"/>
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🔊 تعزيز الصوت" android:textColor="#8FB3E0" android:paddingTop="8dp"/>
-        <SeekBar android:id="@+id/sbBoost" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:max="100" android:progress="0"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="16dp">
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🌊 الصدى" android:textColor="#8FB3E0" android:paddingTop="8dp"/>
-        <SeekBar android:id="@+id/sbEcho" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:max="100" android:progress="0"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🔊 تعزيز الصوت" android:textColor="@color/muted" android:textSize="13sp"/>
+            <SeekBar android:id="@+id/sbBoost" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="100" android:progress="0"
+                android:progressTint="@color/cyan" android:thumbTint="@color/cyan"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🎚️ طبقة الصوت (طفل ← رجولي)" android:textColor="#8FB3E0" android:paddingTop="8dp"/>
-        <SeekBar android:id="@+id/sbPitch" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:max="100" android:progress="50"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🌊 الصدى" android:textColor="@color/muted" android:textSize="13sp"/>
+            <SeekBar android:id="@+id/sbEcho" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="100" android:progress="0"
+                android:progressTint="@color/cyan" android:thumbTint="@color/cyan"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="📈 تعزيز المايك" android:textColor="#8FB3E0" android:paddingTop="8dp"/>
-        <SeekBar android:id="@+id/sbMic" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:max="100" android:progress="50"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🎚️ طبقة الصوت (طفل ← رجولي)" android:textColor="@color/muted" android:textSize="13sp"/>
+            <SeekBar android:id="@+id/sbPitch" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="100" android:progress="50"
+                android:progressTint="@color/gold" android:thumbTint="@color/gold"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🌫️ تشويش" android:textColor="#8FB3E0" android:paddingTop="8dp"/>
-        <SeekBar android:id="@+id/sbNoise" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:max="100" android:progress="0"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📈 تعزيز المايك" android:textColor="@color/muted" android:textSize="13sp"/>
+            <SeekBar android:id="@+id/sbMic" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="100" android:progress="50"
+                android:progressTint="@color/cyan" android:thumbTint="@color/cyan"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🌫️ تشويش" android:textColor="@color/muted" android:textSize="13sp"/>
+            <SeekBar android:id="@+id/sbNoise" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:max="100" android:progress="0"
+                android:progressTint="@color/cyan" android:thumbTint="@color/cyan"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🎭 أصوات جاهزة"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textColor="@color/text"
+            android:textSize="19sp"
             android:textStyle="bold"
-            android:paddingTop="16dp"/>
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button android:id="@+id/btnChild" android:layout_width="0dp" android:layout_weight="1"
-                android:layout_height="50dp" android:layout_marginEnd="3dp"
-                android:backgroundTint="#1E3A5F" android:textColor="#FFFFFF" android:text="🧒 طفل"/>
+                android:layout_height="54dp" android:layout_marginEnd="4dp"
+                android:background="@drawable/btn_ghost" android:textColor="@color/text"
+                android:text="🧒 طفل"/>
+
             <Button android:id="@+id/btnMan" android:layout_width="0dp" android:layout_weight="1"
-                android:layout_height="50dp" android:layout_marginStart="3dp" android:layout_marginEnd="3dp"
-                android:backgroundTint="#1E3A5F" android:textColor="#FFFFFF" android:text="🧔 رجولي"/>
+                android:layout_height="54dp" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"
+                android:background="@drawable/btn_ghost" android:textColor="@color/text"
+                android:text="🧔 رجولي"/>
+
             <Button android:id="@+id/btnRobot" android:layout_width="0dp" android:layout_weight="1"
-                android:layout_height="50dp" android:layout_marginStart="3dp"
-                android:backgroundTint="#1E3A5F" android:textColor="#FFFFFF" android:text="🤖 روبوت"/>
+                android:layout_height="54dp" android:layout_marginStart="4dp"
+                android:background="@drawable/btn_ghost" android:textColor="@color/text"
+                android:text="🤖 روبوت"/>
         </LinearLayout>
 
         <Button
             android:id="@+id/btnExport"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#2F80ED"
+            android:layout_height="58dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/btn_primary"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:text="💾 حفظ بالصوت المعدّل + مشاركة"/>
+            android:textSize="15sp"
+            android:text="💾  حفظ بالصوت المعدّل + مشاركة"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="حقوق: أبوجبل ابن الكوت — @P71GP\nممنوع التعديل أو إعادة النشر دون إذن."
-            android:textColor="#5A5A62"
-            android:textSize="12sp"
+            android:text="صانع التطبيق: أبوجبل ابن الكوت — @P71GP\nهذا التطبيق ملكي، وأي تعديل أو إعادة نشر دون إذن ممنوع."
+            android:textColor="#4A4A55"
+            android:textSize="11sp"
             android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingBottom="16dp"/>
+            android:paddingTop="22dp"
+            android:paddingBottom="18dp"/>
     </LinearLayout>
 </ScrollView>
